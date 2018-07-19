@@ -15,19 +15,22 @@ class Board extends React.Component {
 
   handleClick(i) {
     const squares = this.state.squares.slice();
-    if(this.state.turn == 'X') {
+    /*if(this.state.turn == 'X') {
       squares[i] = 'X';
       this.setState({squares: squares, turn: 'O'});
     } else {
       squares[i] = 'O';
       this.setState({squares: squares, turn: 'X'});
-    }
+    }*/
+    squares[i] = this.state.turn ? 'X' : 'O';
+    this.setState({squares: squares,
+                   turn: !this.state.turn});
   }
 
   constructor(props) {
     super(props);
     this.state = {squares: Array(9).fill(null),
-                  turn: 'X'};
+                  turn: true};
   }
 
   renderSquare(i) {
@@ -36,7 +39,13 @@ class Board extends React.Component {
   }
 
   render() {
-    const status = 'Next player: X';
+    var winner = calculateWinner(this.state.squares);
+    let status;
+    if(winner){
+      status = 'Winner: ' + winner;
+    } else {
+      status = 'Next player: ' + (this.state.turn ? 'X' : 'O');
+    }
 
     return (
       <div>
@@ -83,3 +92,25 @@ ReactDOM.render(
   <Game />,
   document.getElementById('root')
 );
+
+function calculateWinner(squares) {
+    const lines = [
+      [0,1,2],
+      [3,4,5],
+      [6,7,8],
+      [0,3,6],
+      [1,4,7],
+      [2,5,8],
+      [0,4,8],
+      [2,4,6]
+    ];
+    for (var i = 0; i < lines.length; i++) {
+      var list = lines[i];
+
+      if (squares[list[0]] && squares[list[0]] === squares[list[1]] && squares[list[0]] === squares[list[2]]) {
+            console.log(list);
+            return squares[list[0]];
+      }
+    }
+    return null;
+}
